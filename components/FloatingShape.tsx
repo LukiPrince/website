@@ -1,7 +1,6 @@
 "use client";
 
-import { motion, useTransform } from "framer-motion";
-import { useMousePosition } from "./MouseProvider";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 interface FloatingParticleProps {
@@ -21,35 +20,16 @@ export function FloatingParticle({
   duration = 8,
   opacity = 0.3,
 }: FloatingParticleProps) {
-  const { smoothX, smoothY } = useMousePosition();
   const [isMounted, setIsMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
+    setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window);
   }, []);
 
-  const offsetX = useTransform(smoothX, (mouseX) => {
-    if (typeof window === "undefined" || !isMounted) return 0;
-    const particleX = (parseFloat(x) / 100) * window.innerWidth;
-    const distance = mouseX - particleX;
-    const maxDistance = 400;
-    if (Math.abs(distance) > maxDistance) return 0;
-    const strength = 1 - Math.abs(distance) / maxDistance;
-    return -distance * strength * 0.15;
-  });
-
-  const offsetY = useTransform(smoothY, (mouseY) => {
-    if (typeof window === "undefined" || !isMounted) return 0;
-    const particleY = (parseFloat(y) / 100) * window.innerHeight;
-    const distance = mouseY - particleY;
-    const maxDistance = 400;
-    if (Math.abs(distance) > maxDistance) return 0;
-    const strength = 1 - Math.abs(distance) / maxDistance;
-    return -distance * strength * 0.15;
-  });
-
-  // Don't render until mounted to avoid hydration mismatch
-  if (!isMounted) {
+  // Don't render on mobile or until mounted
+  if (!isMounted || isMobile) {
     return null;
   }
 
@@ -59,8 +39,6 @@ export function FloatingParticle({
       style={{
         left: x,
         top: y,
-        x: offsetX,
-        y: offsetY,
       }}
       initial={{ opacity: 0, scale: 0 }}
       animate={{

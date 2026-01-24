@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useRef, type ReactNode } from "react";
+import { useRef, useState, useEffect, type ReactNode } from "react";
 
 interface GlassCardProps {
   children: ReactNode;
@@ -15,6 +15,11 @@ export function GlassCard({
   tiltStrength = 10,
 }: GlassCardProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(true);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window);
+  }, []);
 
   const rotateX = useMotionValue(0);
   const rotateY = useMotionValue(0);
@@ -26,7 +31,7 @@ export function GlassCard({
   const rotateYSpring = useSpring(rotateY, springConfig);
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!ref.current) return;
+    if (isMobile || !ref.current) return;
 
     const rect = ref.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
@@ -58,6 +63,22 @@ export function GlassCard({
       `radial-gradient(circle at ${x}% ${y}%, var(--glass-highlight) 0%, transparent 60%)`
   );
 
+  // Simplified card for mobile
+  if (isMobile) {
+    return (
+      <div className={`relative ${className}`}>
+        <div
+          className="absolute inset-0 rounded-2xl"
+          style={{
+            background: "var(--glass-bg)",
+            border: "1px solid var(--glass-border)",
+          }}
+        />
+        <div className="relative z-10">{children}</div>
+      </div>
+    );
+  }
+
   return (
     <motion.div
       ref={ref}
@@ -71,7 +92,6 @@ export function GlassCard({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Glass surface */}
       <div
         className="absolute inset-0 rounded-2xl"
         style={{
@@ -81,14 +101,10 @@ export function GlassCard({
           WebkitBackdropFilter: "blur(20px)",
         }}
       />
-
-      {/* Glare effect */}
       <motion.div
         className="pointer-events-none absolute inset-0 rounded-2xl opacity-50"
         style={{ background: glareBackground }}
       />
-
-      {/* Content */}
       <div className="relative z-10">{children}</div>
     </motion.div>
   );

@@ -12,33 +12,77 @@ export function LiquidBlob({ className = "" }: LiquidBlobProps) {
   const { smoothX, smoothY } = useMousePosition();
   const [dimensions, setDimensions] = useState({ width: 1920, height: 1080 });
   const [isMounted, setIsMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
-    const updateDimensions = () => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window);
       setDimensions({ width: window.innerWidth, height: window.innerHeight });
     };
-    updateDimensions();
-    window.addEventListener("resize", updateDimensions);
-    return () => window.removeEventListener("resize", updateDimensions);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const blobX = useTransform(smoothX, [0, dimensions.width], [-50, 50]);
-  const blobY = useTransform(smoothY, [0, dimensions.height], [-50, 50]);
-
-  const blob2X = useTransform(smoothX, [0, dimensions.width], [30, -30]);
-  const blob2Y = useTransform(smoothY, [0, dimensions.height], [40, -40]);
-
-  const blob3X = useTransform(smoothX, [0, dimensions.width], [-20, 40]);
-  const blob3Y = useTransform(smoothY, [0, dimensions.height], [-30, 30]);
+  const blobX = useTransform(smoothX, [0, dimensions.width], [-30, 30]);
+  const blobY = useTransform(smoothY, [0, dimensions.height], [-30, 30]);
 
   if (!isMounted) {
     return <div className={`absolute inset-0 overflow-hidden ${className}`} />;
   }
 
+  // Simplified version for mobile - no filters, fewer animations
+  if (isMobile) {
+    return (
+      <div className={`absolute inset-0 overflow-hidden ${className}`}>
+        {/* Simple gradient blobs without filter */}
+        <motion.div
+          className="absolute rounded-full"
+          style={{
+            width: "70vw",
+            height: "70vw",
+            left: "5%",
+            top: "10%",
+            background: "radial-gradient(circle, var(--accent) 0%, transparent 70%)",
+            opacity: 0.08,
+          }}
+          animate={{
+            scale: [1, 1.05, 1],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute rounded-full"
+          style={{
+            width: "50vw",
+            height: "50vw",
+            right: "0%",
+            top: "40%",
+            background: "radial-gradient(circle, var(--text-primary) 0%, transparent 70%)",
+            opacity: 0.04,
+          }}
+          animate={{
+            scale: [1, 1.08, 1],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2,
+          }}
+        />
+      </div>
+    );
+  }
+
+  // Desktop version with full effects
   return (
     <div className={`absolute inset-0 overflow-hidden ${className}`}>
-      {/* SVG Filter for liquid effect */}
       <svg className="absolute h-0 w-0">
         <defs>
           <filter id="liquid">
@@ -54,12 +98,7 @@ export function LiquidBlob({ className = "" }: LiquidBlobProps) {
         </defs>
       </svg>
 
-      {/* Liquid blob container */}
-      <div
-        className="absolute inset-0"
-        style={{ filter: "url(#liquid)" }}
-      >
-        {/* Primary blob */}
+      <div className="absolute inset-0" style={{ filter: "url(#liquid)" }}>
         <motion.div
           className="absolute"
           style={{
@@ -103,7 +142,6 @@ export function LiquidBlob({ className = "" }: LiquidBlobProps) {
           />
         </motion.div>
 
-        {/* Secondary blob */}
         <motion.div
           className="absolute"
           style={{
@@ -113,8 +151,6 @@ export function LiquidBlob({ className = "" }: LiquidBlobProps) {
             maxHeight: "600px",
             right: "5%",
             top: "30%",
-            x: blob2X,
-            y: blob2Y,
           }}
           animate={{
             scale: [1, 1.15, 1],
@@ -148,7 +184,6 @@ export function LiquidBlob({ className = "" }: LiquidBlobProps) {
           />
         </motion.div>
 
-        {/* Tertiary blob */}
         <motion.div
           className="absolute"
           style={{
@@ -158,8 +193,6 @@ export function LiquidBlob({ className = "" }: LiquidBlobProps) {
             maxHeight: "500px",
             left: "30%",
             bottom: "5%",
-            x: blob3X,
-            y: blob3Y,
           }}
           animate={{
             scale: [1, 1.08, 1],
@@ -194,7 +227,6 @@ export function LiquidBlob({ className = "" }: LiquidBlobProps) {
         </motion.div>
       </div>
 
-      {/* Subtle grid overlay */}
       <div
         className="absolute inset-0 opacity-[0.02]"
         style={{
