@@ -2,7 +2,7 @@
 
 import { motion, useTransform, useInView } from "framer-motion";
 import { useMousePosition } from "./MouseProvider";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 
 interface AnimatedTextProps {
   text: string;
@@ -26,6 +26,11 @@ export function AnimatedText({
   const { smoothX, smoothY } = useMousePosition();
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const words = text.split(" ");
 
@@ -62,13 +67,13 @@ export function AnimatedText({
   };
 
   const x = useTransform(smoothX, (value) => {
-    if (typeof window === "undefined") return 0;
+    if (!isMounted) return 0;
     const center = window.innerWidth / 2;
     return (value - center) * -parallaxStrength;
   });
 
   const y = useTransform(smoothY, (value) => {
-    if (typeof window === "undefined") return 0;
+    if (!isMounted) return 0;
     const center = window.innerHeight / 2;
     return (value - center) * -parallaxStrength;
   });
@@ -82,7 +87,7 @@ export function AnimatedText({
       variants={containerVariants}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
-      style={{ x, y, perspective: 1000, ...customStyle }}
+      style={{ x: isMounted ? x : 0, y: isMounted ? y : 0, ...customStyle }}
     >
       {words.map((word, i) => {
         const isItalic = italic.includes(i);

@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { motion, useSpring, useMotionValue, useTransform, animate } from "framer-motion";
+import { motion, useSpring, useMotionValue, useTransform } from "framer-motion";
 
 export function CustomCursor() {
-  const [isHovering, setIsHovering] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(true);
   const [hoverText, setHoverText] = useState<string | null>(null);
@@ -27,6 +26,13 @@ export function CustomCursor() {
   const trailSize = useSpring(40, morphConfig);
   const trailOpacity = useSpring(0.15, morphConfig);
   const borderRadius = useSpring(50, morphConfig);
+
+  // Transform hooks must be at top level
+  const cursorMarginLeft = useTransform(cursorSize, (s) => -s / 2);
+  const cursorMarginTop = useTransform(cursorSize, (s) => -s / 2);
+  const trailMarginLeft = useTransform(trailSize, (s) => -s / 2);
+  const trailMarginTop = useTransform(trailSize, (s) => -s / 2);
+  const borderRadiusPercent = useTransform(borderRadius, (r) => `${r}%`);
 
   const lastX = useRef(0);
   const lastY = useRef(0);
@@ -68,14 +74,13 @@ export function CustomCursor() {
       const interactiveElement = target.closest("a, button, [data-magnetic], [data-cursor-text]");
 
       if (interactiveElement) {
-        setIsHovering(true);
         cursorSize.set(4);
         trailSize.set(80);
         trailOpacity.set(0.08);
 
-        const cursorText = interactiveElement.getAttribute("data-cursor-text");
-        if (cursorText) {
-          setHoverText(cursorText);
+        const cursorTextAttr = interactiveElement.getAttribute("data-cursor-text");
+        if (cursorTextAttr) {
+          setHoverText(cursorTextAttr);
           trailSize.set(100);
         }
 
@@ -86,7 +91,6 @@ export function CustomCursor() {
     };
 
     const handleHoverEnd = () => {
-      setIsHovering(false);
       setHoverText(null);
       cursorSize.set(8);
       trailSize.set(40);
@@ -126,8 +130,8 @@ export function CustomCursor() {
           style={{
             width: cursorSize,
             height: cursorSize,
-            marginLeft: useTransform(cursorSize, (s) => -s / 2),
-            marginTop: useTransform(cursorSize, (s) => -s / 2),
+            marginLeft: cursorMarginLeft,
+            marginTop: cursorMarginTop,
             opacity: isVisible ? 1 : 0,
           }}
         >
@@ -154,17 +158,17 @@ export function CustomCursor() {
           style={{
             width: trailSize,
             height: trailSize,
-            marginLeft: useTransform(trailSize, (s) => -s / 2),
-            marginTop: useTransform(trailSize, (s) => -s / 2),
+            marginLeft: trailMarginLeft,
+            marginTop: trailMarginTop,
             opacity: isVisible ? 1 : 0,
-            borderRadius: useTransform(borderRadius, (r) => `${r}%`),
+            borderRadius: borderRadiusPercent,
             rotate: rotationSpring,
           }}
         >
           <motion.div
             className="absolute inset-0"
             style={{
-              borderRadius: useTransform(borderRadius, (r) => `${r}%`),
+              borderRadius: borderRadiusPercent,
               background: "var(--glass-bg)",
               border: "1px solid var(--glass-border)",
               backdropFilter: "blur(8px)",

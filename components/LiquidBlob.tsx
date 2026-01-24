@@ -10,9 +10,11 @@ interface LiquidBlobProps {
 
 export function LiquidBlob({ className = "" }: LiquidBlobProps) {
   const { smoothX, smoothY } = useMousePosition();
-  const [dimensions, setDimensions] = useState({ width: 1000, height: 800 });
+  const [dimensions, setDimensions] = useState({ width: 1920, height: 1080 });
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     const updateDimensions = () => {
       setDimensions({ width: window.innerWidth, height: window.innerHeight });
     };
@@ -30,6 +32,10 @@ export function LiquidBlob({ className = "" }: LiquidBlobProps) {
   const blob3X = useTransform(smoothX, [0, dimensions.width], [-20, 40]);
   const blob3Y = useTransform(smoothY, [0, dimensions.height], [-30, 30]);
 
+  if (!isMounted) {
+    return <div className={`absolute inset-0 overflow-hidden ${className}`} />;
+  }
+
   return (
     <div className={`absolute inset-0 overflow-hidden ${className}`}>
       {/* SVG Filter for liquid effect */}
@@ -45,18 +51,6 @@ export function LiquidBlob({ className = "" }: LiquidBlobProps) {
             />
             <feComposite in="SourceGraphic" in2="liquid" operator="atop" />
           </filter>
-          <linearGradient id="blob-gradient-1" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.15" />
-            <stop offset="100%" stopColor="var(--accent)" stopOpacity="0.05" />
-          </linearGradient>
-          <linearGradient id="blob-gradient-2" x1="100%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="var(--text-primary)" stopOpacity="0.08" />
-            <stop offset="100%" stopColor="var(--text-primary)" stopOpacity="0.02" />
-          </linearGradient>
-          <linearGradient id="blob-gradient-3" x1="50%" y1="0%" x2="50%" y2="100%">
-            <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.1" />
-            <stop offset="100%" stopColor="var(--text-muted)" stopOpacity="0.03" />
-          </linearGradient>
         </defs>
       </svg>
 
@@ -91,7 +85,6 @@ export function LiquidBlob({ className = "" }: LiquidBlobProps) {
           <motion.div
             className="h-full w-full rounded-full"
             style={{
-              background: "url(#blob-gradient-1)",
               backgroundColor: "var(--accent)",
               opacity: 0.12,
             }}

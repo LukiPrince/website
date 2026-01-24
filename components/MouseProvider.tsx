@@ -34,8 +34,8 @@ export function useMousePosition() {
 }
 
 export function MouseProvider({ children }: { children: ReactNode }) {
-  const mouseX = useMotionValue(typeof window !== "undefined" ? window.innerWidth / 2 : 0);
-  const mouseY = useMotionValue(typeof window !== "undefined" ? window.innerHeight / 2 : 0);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
   const velocityX = useMotionValue(0);
   const velocityY = useMotionValue(0);
   const [isMoving, setIsMoving] = useState(false);
@@ -44,10 +44,14 @@ export function MouseProvider({ children }: { children: ReactNode }) {
   const smoothY = useSpring(mouseY, { stiffness: 150, damping: 20, mass: 0.5 });
 
   useEffect(() => {
+    // Initialize to center of screen
+    mouseX.set(window.innerWidth / 2);
+    mouseY.set(window.innerHeight / 2);
+
     let lastX = mouseX.get();
     let lastY = mouseY.get();
     let lastTime = Date.now();
-    let moveTimeout: NodeJS.Timeout;
+    let moveTimeout: ReturnType<typeof setTimeout>;
 
     const handleMouseMove = (e: MouseEvent) => {
       const now = Date.now();
