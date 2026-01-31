@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ReactNode } from "react";
 
 interface TimelineItemProps {
   year: string;
@@ -25,8 +24,8 @@ export function TimelineItem({
   return (
     <motion.div
       className="relative flex gap-6 md:gap-10"
-      initial={{ opacity: 0, x: -40 }}
-      whileInView={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.6, delay: index * 0.1 }}
     >
@@ -35,30 +34,34 @@ export function TimelineItem({
         <motion.div
           className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full"
           style={{
-            background: "var(--glass-bg)",
-            border: "1px solid var(--glass-border)",
+            background: "rgba(255, 255, 255, 0.72)",
+            border: "1px solid rgba(0, 0, 0, 0.06)",
+            backdropFilter: "blur(20px)",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
           }}
-          whileHover={{ scale: 1.1 }}
+          whileHover={{ scale: 1.08 }}
           transition={{ duration: 0.2 }}
         >
           <motion.div
             className="h-3 w-3 rounded-full"
-            style={{ background: "var(--accent)" }}
+            style={{
+              background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%)",
+            }}
             animate={{
               boxShadow: [
-                "0 0 0 0 var(--accent-glow)",
-                "0 0 20px 4px var(--accent-glow)",
-                "0 0 0 0 var(--accent-glow)",
+                "0 0 0 0 rgba(0, 122, 255, 0)",
+                "0 0 16px 4px rgba(0, 122, 255, 0.2)",
+                "0 0 0 0 rgba(0, 122, 255, 0)",
               ],
             }}
-            transition={{ duration: 2, repeat: Infinity, delay: index * 0.3 }}
+            transition={{ duration: 2.5, repeat: Infinity, delay: index * 0.3 }}
           />
         </motion.div>
         {!isLast && (
           <div
             className="h-full w-[1px] flex-1"
             style={{
-              background: `linear-gradient(to bottom, var(--glass-border), transparent)`,
+              background: `linear-gradient(to bottom, rgba(0, 0, 0, 0.08), transparent)`,
             }}
           />
         )}
@@ -67,23 +70,27 @@ export function TimelineItem({
       {/* Content */}
       <div className="flex-1 pb-12">
         <motion.div
-          className="rounded-2xl p-6 md:p-8"
+          className="rounded-3xl p-6 md:p-8"
           style={{
-            background: "var(--glass-bg)",
-            border: "1px solid var(--glass-border)",
+            background: "rgba(255, 255, 255, 0.72)",
+            border: "1px solid rgba(0, 0, 0, 0.06)",
+            backdropFilter: "blur(40px) saturate(150%)",
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
           }}
           whileHover={{
-            background: "var(--glass-highlight)",
-            borderColor: "var(--accent)",
+            boxShadow: "0 8px 32px rgba(0, 122, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
+            borderColor: "rgba(0, 122, 255, 0.2)",
           }}
           transition={{ duration: 0.3 }}
         >
           <div className="flex flex-wrap items-center gap-3 mb-3">
+            {/* Tinted badge for year */}
             <span
-              className="px-3 py-1 rounded-full text-xs font-medium tracking-wider"
+              className="px-3 py-1.5 rounded-full text-xs font-medium tracking-wider"
               style={{
-                background: "var(--accent)",
-                color: "var(--bg-primary)",
+                background: "linear-gradient(135deg, rgba(0, 122, 255, 0.12) 0%, rgba(88, 86, 214, 0.08) 100%)",
+                color: "var(--accent)",
+                border: "1px solid rgba(0, 122, 255, 0.15)",
               }}
             >
               {year}
@@ -117,9 +124,10 @@ export function TimelineItem({
                   key={tech}
                   className="px-3 py-1 rounded-full text-xs"
                   style={{
-                    background: "var(--glass-bg)",
-                    border: "1px solid var(--glass-border)",
+                    background: "rgba(255, 255, 255, 0.6)",
+                    border: "1px solid rgba(0, 0, 0, 0.04)",
                     color: "var(--text-muted)",
+                    backdropFilter: "blur(10px)",
                   }}
                 >
                   {tech}

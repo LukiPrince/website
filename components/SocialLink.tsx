@@ -15,25 +15,28 @@ export function SocialLink({ href, label, icon, index }: SocialLinkProps) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-center gap-4 rounded-2xl p-4 transition-colors"
+      className="group flex items-center gap-4 rounded-3xl p-4 touch-target"
       style={{
-        background: "var(--glass-bg)",
-        border: "1px solid var(--glass-border)",
+        background: "rgba(255, 255, 255, 0.72)",
+        border: "1px solid rgba(0, 0, 0, 0.06)",
+        backdropFilter: "blur(40px) saturate(150%)",
+        boxShadow: "0 4px 16px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
       }}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
       whileHover={{
-        y: -2,
-        borderColor: "var(--accent)",
+        y: -4,
+        boxShadow: "0 8px 32px rgba(0, 122, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
+        borderColor: "rgba(0, 122, 255, 0.2)",
       }}
     >
       <div
         className="flex h-12 w-12 items-center justify-center rounded-full transition-colors"
         style={{
-          background: "var(--glass-highlight)",
-          color: "var(--text-primary)",
+          background: "linear-gradient(135deg, rgba(0, 122, 255, 0.1) 0%, rgba(88, 86, 214, 0.08) 100%)",
+          color: "var(--accent)",
         }}
       >
         {icon}

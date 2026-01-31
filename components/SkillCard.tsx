@@ -13,18 +13,21 @@ interface SkillCardProps {
 export function SkillCard({ name, level, icon, category, index }: SkillCardProps) {
   return (
     <motion.div
-      className="group relative rounded-2xl p-5"
+      className="group relative rounded-3xl p-5"
       style={{
-        background: "var(--glass-bg)",
-        border: "1px solid var(--glass-border)",
+        background: "rgba(255, 255, 255, 0.72)",
+        border: "1px solid rgba(0, 0, 0, 0.06)",
+        backdropFilter: "blur(40px) saturate(150%)",
+        boxShadow: "0 4px 16px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
       }}
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.05 }}
       whileHover={{
         y: -4,
-        borderColor: "var(--accent)",
+        boxShadow: "0 8px 32px rgba(0, 122, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
+        borderColor: "rgba(0, 122, 255, 0.2)",
       }}
     >
       <div className="flex items-start justify-between mb-4">
@@ -49,11 +52,18 @@ export function SkillCard({ name, level, icon, category, index }: SkillCardProps
         )}
       </div>
 
-      {/* Skill level bar */}
-      <div className="relative h-1 rounded-full overflow-hidden" style={{ background: "var(--glass-border)" }}>
+      {/* iOS-style gradient progress bar */}
+      <div
+        className="relative h-1.5 rounded-full overflow-hidden"
+        style={{
+          background: "rgba(0, 0, 0, 0.06)",
+        }}
+      >
         <motion.div
           className="absolute inset-y-0 left-0 rounded-full"
-          style={{ background: "var(--accent)" }}
+          style={{
+            background: "linear-gradient(90deg, #007aff 0%, #5856d6 50%, #34c759 100%)",
+          }}
           initial={{ width: 0 }}
           whileInView={{ width: `${level}%` }}
           viewport={{ once: true }}

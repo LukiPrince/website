@@ -1,0 +1,63 @@
+{
+  "personalInfo": {
+    "name": "Your Name",
+    "tagline": "Creative Developer",
+    "headline": "Crafting digital experiences that feel alive",
+    "subtitle": "I design and build interfaces that blend elegant aesthetics with thoughtful interaction, creating moments of delight in every detail.",
+    "aboutTitle": "A bit about myself",
+    "aboutText": [
+      "I'm a passionate developer with a love for creating beautiful, functional digital experiences. With a background in both design and development, I bridge the gap between aesthetics and functionality.",
+      "When I'm not coding, you'll find me exploring new technologies, contributing to open-source projects, or experimenting with creative coding and generative art."
+    ],
+    "location": "Based in Your City",
+    "available": true
+  },
+  "projects": [
+    {
+      "title": "Immersive Gallery",
+      "category": "Web Experience",
+      "description": "A 3D art gallery with spatial audio and gesture controls",
+      "link": "#"
+    },
+    {
+      "title": "Neural Interface",
+      "category": "Dashboard",
+      "description": "Real-time data visualization for AI model training",
+      "link": "#"
+    },
+    {
+      "title": "Sonic Landscapes",
+      "category": "Creative Tool",
+      "description": "Generative music composition through visual interaction",
+      "link": "#"
+    },
+    {
+      "title": "Fluid Commerce",
+      "category": "E-commerce",
+      "description": "Luxury retail experience with cinematic product reveals",
+      "link": "#"
+    }
+  ],
+  "socialLinks": [
+    {
+      "label": "GitHub",
+      "href": "https://github.com/yourusername",
+      "iconType": "github"
+    },
+    {
+      "label": "LinkedIn",
+      "href": "https://linkedin.com/in/yourusername",
+      "iconType": "linkedin"
+    },
+    {
+      "label": "Twitter / X",
+      "href": "https://twitter.com/yourusername",
+      "iconType": "twitter"
+    },
+    {
+      "label": "Email",
+      "href": "mailto:your@email.com",
+      "iconType": "email"
+    }
+  ]
+}

@@ -12,9 +12,10 @@ export function CustomCursor() {
   const cursorY = useMotionValue(0);
   const rotation = useMotionValue(0);
 
-  const springConfig = { stiffness: 800, damping: 35, mass: 0.5 };
-  const trailConfig = { stiffness: 120, damping: 20, mass: 1 };
-  const morphConfig = { stiffness: 400, damping: 30 };
+  // Softer spring configs for iOS feel
+  const springConfig = { stiffness: 600, damping: 30, mass: 0.5 };
+  const trailConfig = { stiffness: 150, damping: 25, mass: 1 };
+  const morphConfig = { stiffness: 400, damping: 25 };
 
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
@@ -22,9 +23,9 @@ export function CustomCursor() {
   const trailYSpring = useSpring(cursorY, trailConfig);
   const rotationSpring = useSpring(rotation, { stiffness: 100, damping: 20 });
 
-  const cursorSize = useSpring(8, morphConfig);
-  const trailSize = useSpring(40, morphConfig);
-  const trailOpacity = useSpring(0.15, morphConfig);
+  const cursorSize = useSpring(6, morphConfig);
+  const trailSize = useSpring(36, morphConfig);
+  const trailOpacity = useSpring(0.4, morphConfig);
   const borderRadius = useSpring(50, morphConfig);
 
   // Transform hooks must be at top level
@@ -74,27 +75,27 @@ export function CustomCursor() {
       const interactiveElement = target.closest("a, button, [data-magnetic], [data-cursor-text]");
 
       if (interactiveElement) {
-        cursorSize.set(4);
-        trailSize.set(80);
-        trailOpacity.set(0.08);
+        cursorSize.set(3);
+        trailSize.set(72);
+        trailOpacity.set(0.2);
 
         const cursorTextAttr = interactiveElement.getAttribute("data-cursor-text");
         if (cursorTextAttr) {
           setHoverText(cursorTextAttr);
-          trailSize.set(100);
+          trailSize.set(90);
         }
 
         if (interactiveElement.hasAttribute("data-cursor-square")) {
-          borderRadius.set(12);
+          borderRadius.set(16);
         }
       }
     };
 
     const handleHoverEnd = () => {
       setHoverText(null);
-      cursorSize.set(8);
-      trailSize.set(40);
-      trailOpacity.set(0.15);
+      cursorSize.set(6);
+      trailSize.set(36);
+      trailOpacity.set(0.4);
       borderRadius.set(50);
     };
 
@@ -117,7 +118,7 @@ export function CustomCursor() {
 
   return (
     <>
-      {/* Main cursor dot */}
+      {/* Main cursor dot - iOS blue accent */}
       <motion.div
         className="pointer-events-none fixed left-0 top-0 z-[9999]"
         style={{
@@ -138,14 +139,14 @@ export function CustomCursor() {
           <motion.div
             className="absolute inset-0 rounded-full"
             style={{
-              background: "var(--accent)",
-              boxShadow: "0 0 20px var(--accent-glow)",
+              background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%)",
+              boxShadow: "0 0 12px var(--accent-glow), 0 0 24px rgba(0, 122, 255, 0.15)",
             }}
           />
         </motion.div>
       </motion.div>
 
-      {/* Trailing glass ring */}
+      {/* Trailing glass ring - soft translucent */}
       <motion.div
         className="pointer-events-none fixed left-0 top-0 z-[9998]"
         style={{
@@ -169,16 +170,17 @@ export function CustomCursor() {
             className="absolute inset-0"
             style={{
               borderRadius: borderRadiusPercent,
-              background: "var(--glass-bg)",
-              border: "1px solid var(--glass-border)",
-              backdropFilter: "blur(8px)",
+              background: "rgba(255, 255, 255, 0.6)",
+              border: "1px solid rgba(0, 0, 0, 0.04)",
+              backdropFilter: "blur(12px) saturate(150%)",
+              boxShadow: "0 4px 16px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
               opacity: trailOpacity,
             }}
           />
           {hoverText && (
             <motion.span
               className="relative z-10 text-xs font-medium tracking-wide"
-              style={{ color: "var(--text-primary)" }}
+              style={{ color: "var(--accent)" }}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}

@@ -18,7 +18,7 @@ export function FloatingParticle({
   size = 4,
   delay = 0,
   duration = 8,
-  opacity = 0.3,
+  opacity = 0.4,
 }: FloatingParticleProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -44,11 +44,11 @@ export function FloatingParticle({
       animate={{
         opacity: opacity,
         scale: 1,
-        y: [0, -15, 0],
+        y: [0, -12, 0],
       }}
       transition={{
-        opacity: { duration: 1, delay },
-        scale: { duration: 0.8, delay },
+        opacity: { duration: 0.8, delay },
+        scale: { duration: 0.6, delay },
         y: {
           duration,
           repeat: Infinity,
@@ -57,13 +57,17 @@ export function FloatingParticle({
         },
       }}
     >
+      {/* iOS blue glow particle */}
       <div
         className="rounded-full"
         style={{
           width: size,
           height: size,
-          background: `radial-gradient(circle, var(--accent) 0%, transparent 70%)`,
-          boxShadow: `0 0 ${size * 2}px var(--accent-glow)`,
+          background: `linear-gradient(135deg, rgba(0, 122, 255, 0.6) 0%, rgba(88, 86, 214, 0.4) 100%)`,
+          boxShadow: `
+            0 0 ${size * 2}px rgba(0, 122, 255, 0.3),
+            0 0 ${size * 4}px rgba(0, 122, 255, 0.15)
+          `,
         }}
       />
     </motion.div>

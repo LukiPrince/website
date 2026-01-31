@@ -17,7 +17,7 @@ export function MagneticButton({
   children,
   className = "",
   href,
-  strength = 0.35,
+  strength = 0.3,
   variant = "primary",
   cursorText,
 }: MagneticButtonProps) {
@@ -29,11 +29,12 @@ export function MagneticButton({
   const textX = useMotionValue(0);
   const textY = useMotionValue(0);
 
-  const springConfig = { stiffness: 200, damping: 20, mass: 0.5 };
+  // Softer spring config for iOS feel
+  const springConfig = { stiffness: 400, damping: 25, mass: 0.5 };
   const xSpring = useSpring(x, springConfig);
   const ySpring = useSpring(y, springConfig);
-  const textXSpring = useSpring(textX, { stiffness: 350, damping: 25 });
-  const textYSpring = useSpring(textY, { stiffness: 350, damping: 25 });
+  const textXSpring = useSpring(textX, { stiffness: 500, damping: 30 });
+  const textYSpring = useSpring(textY, { stiffness: 500, damping: 30 });
 
   const handleMouseMove = () => {
     if (!ref.current) return;
@@ -45,14 +46,14 @@ export function MagneticButton({
     const distanceX = mouseX.get() - centerX;
     const distanceY = mouseY.get() - centerY;
     const distance = Math.sqrt(distanceX ** 2 + distanceY ** 2);
-    const maxDistance = 120;
+    const maxDistance = 100;
 
     if (distance < maxDistance) {
       const factor = 1 - distance / maxDistance;
       x.set(distanceX * strength * factor);
       y.set(distanceY * strength * factor);
-      textX.set(distanceX * strength * 0.6 * factor);
-      textY.set(distanceY * strength * 0.6 * factor);
+      textX.set(distanceX * strength * 0.5 * factor);
+      textY.set(distanceY * strength * 0.5 * factor);
     } else {
       x.set(0);
       y.set(0);
@@ -70,31 +71,38 @@ export function MagneticButton({
 
   const scale = useTransform(xSpring, (value) => {
     const absValue = Math.abs(value);
-    return 1 + absValue * 0.003;
+    return 1 + absValue * 0.002;
   });
 
+  // iOS-inspired button styles
   const baseStyles = {
     primary: `
       relative overflow-hidden
-      bg-[var(--text-primary)] text-[var(--bg-primary)]
-      before:absolute before:inset-0 before:origin-left before:scale-x-0
-      before:bg-[var(--accent)] before:transition-transform before:duration-500 before:ease-[cubic-bezier(0.22,1,0.36,1)]
-      hover:before:scale-x-100
+      bg-gradient-to-b from-[#007aff] to-[#0066d6]
+      text-white font-medium
+      shadow-[0_2px_8px_rgba(0,122,255,0.3),inset_0_1px_0_rgba(255,255,255,0.2)]
+      hover:shadow-[0_4px_16px_rgba(0,122,255,0.4),inset_0_1px_0_rgba(255,255,255,0.2)]
+      active:shadow-[0_1px_4px_rgba(0,122,255,0.3)]
+      transition-shadow duration-200
     `,
     secondary: `
       relative overflow-hidden
-      border border-[var(--glass-border)] bg-[var(--glass-bg)]
-      text-[var(--text-primary)] backdrop-blur-xl
-      before:absolute before:inset-0 before:origin-bottom before:scale-y-0
-      before:bg-[var(--glass-highlight)] before:transition-transform before:duration-500 before:ease-[cubic-bezier(0.22,1,0.36,1)]
-      hover:before:scale-y-100 hover:border-[var(--glass-highlight)]
+      bg-[rgba(255,255,255,0.72)]
+      border border-[rgba(0,0,0,0.06)]
+      text-[var(--accent)] font-medium
+      backdrop-blur-xl
+      shadow-[0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.5)]
+      hover:bg-[rgba(255,255,255,0.9)]
+      hover:shadow-[0_4px_12px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.5)]
+      transition-all duration-200
     `,
     ghost: `
       relative
-      text-[var(--text-secondary)]
-      after:absolute after:-bottom-1 after:left-0 after:h-[1px] after:w-full after:origin-right after:scale-x-0
-      after:bg-[var(--accent)] after:transition-transform after:duration-500 after:ease-[cubic-bezier(0.22,1,0.36,1)]
-      hover:text-[var(--text-primary)] hover:after:origin-left hover:after:scale-x-100
+      text-[var(--text-secondary)] font-medium
+      after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:origin-right after:scale-x-0
+      after:bg-gradient-to-r after:from-[var(--accent)] after:to-[var(--accent-secondary)]
+      after:transition-transform after:duration-300 after:ease-out
+      hover:text-[var(--accent)] hover:after:origin-left hover:after:scale-x-100
     `,
   };
 
@@ -106,6 +114,7 @@ export function MagneticButton({
         x: xSpring,
         y: ySpring,
         scale,
+        borderRadius: variant === "ghost" ? undefined : "980px",
       }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
