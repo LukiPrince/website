@@ -1,62 +1,62 @@
 {
   "personalInfo": {
-    "name": "Your Name",
-    "tagline": "Creative Developer",
-    "headline": "Crafting digital experiences that feel alive",
-    "subtitle": "I design and build interfaces that blend elegant aesthetics with thoughtful interaction, creating moments of delight in every detail.",
-    "aboutTitle": "A bit about myself",
+    "name": "Lukas Wotzka",
+    "tagline": "Digital Craftsman",
+    "headline": "Building interfaces that breathe with life",
+    "subtitle": "I craft immersive digital experiences where fluid motion meets purposeful design. Every interaction is an opportunity to create something memorable.",
+    "aboutTitle": "Hello, I'm Lukas",
     "aboutText": [
-      "I'm a passionate developer with a love for creating beautiful, functional digital experiences. With a background in both design and development, I bridge the gap between aesthetics and functionality.",
-      "When I'm not coding, you'll find me exploring new technologies, contributing to open-source projects, or experimenting with creative coding and generative art."
+      "I'm a developer who believes the best interfaces feel invisible—they anticipate your needs before you're even aware of them. My work lives at the intersection of technical precision and creative expression.",
+      "When I'm not pushing pixels or writing code, I'm exploring the edges of what's possible with web technologies, always searching for that moment when technology dissolves and pure experience remains."
     ],
-    "location": "Based in Your City",
+    "location": "Germany",
     "available": true
   },
   "projects": [
     {
-      "title": "Immersive Gallery",
-      "category": "Web Experience",
-      "description": "A 3D art gallery with spatial audio and gesture controls",
+      "title": "Spatial Canvas",
+      "category": "Interactive Experience",
+      "description": "A 3D creative workspace where gestures paint reality",
       "link": "#"
     },
     {
-      "title": "Neural Interface",
-      "category": "Dashboard",
-      "description": "Real-time data visualization for AI model training",
+      "title": "Flux Dashboard",
+      "category": "Data Visualization",
+      "description": "Real-time analytics that flow like water",
       "link": "#"
     },
     {
-      "title": "Sonic Landscapes",
-      "category": "Creative Tool",
-      "description": "Generative music composition through visual interaction",
+      "title": "Resonance",
+      "category": "Audio Visual",
+      "description": "Sound translated into living, breathing form",
       "link": "#"
     },
     {
-      "title": "Fluid Commerce",
+      "title": "Velvet Commerce",
       "category": "E-commerce",
-      "description": "Luxury retail experience with cinematic product reveals",
+      "description": "Luxury retail reimagined for the digital age",
       "link": "#"
     }
   ],
   "socialLinks": [
     {
       "label": "GitHub",
-      "href": "https://github.com/yourusername",
+      "href": "https://github.com/LukiPrince",
       "iconType": "github"
     },
     {
       "label": "LinkedIn",
-      "href": "https://linkedin.com/in/yourusername",
+      "href": "https://linkedin.com/in/lukaswotzka",
       "iconType": "linkedin"
     },
     {
       "label": "Twitter / X",
-      "href": "https://twitter.com/yourusername",
+      "href": "https://twitter.com/lukaswotzka",
       "iconType": "twitter"
     },
     {
       "label": "Email",
-      "href": "mailto:your@email.com",
+      "href": "mailto:lukaswotzka@icloud.com",
       "iconType": "email"
     }
   ]

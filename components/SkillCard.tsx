@@ -4,91 +4,93 @@ import { motion } from "framer-motion";
 
 interface SkillCardProps {
   name: string;
-  level: number; // 0-100
+  level: number;
   icon?: string;
   category: string;
   index: number;
 }
 
-export function SkillCard({ name, level, icon, category, index }: SkillCardProps) {
+export function SkillCard({ name, level, category, index }: SkillCardProps) {
   return (
     <motion.div
-      className="group relative rounded-3xl p-5"
+      className="group relative rounded-[20px] p-5 overflow-hidden"
       style={{
-        background: "rgba(255, 255, 255, 0.72)",
-        border: "1px solid rgba(0, 0, 0, 0.06)",
-        backdropFilter: "blur(40px) saturate(150%)",
-        boxShadow: "0 4px 16px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
+        background: "rgba(255, 255, 255, 0.6)",
+        border: "1px solid rgba(255, 255, 255, 0.5)",
+        backdropFilter: "blur(40px) saturate(160%)",
+        WebkitBackdropFilter: "blur(40px) saturate(160%)",
+        boxShadow: `
+          0 4px 16px rgba(0, 0, 0, 0.04),
+          0 1px 2px rgba(0, 0, 0, 0.02),
+          inset 0 1px 0 rgba(255, 255, 255, 1)
+        `,
       }}
-      initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+      initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
       whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.05 }}
+      transition={{ duration: 0.6, delay: index * 0.06 }}
       whileHover={{
-        y: -4,
-        boxShadow: "0 8px 32px rgba(0, 122, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
-        borderColor: "rgba(0, 122, 255, 0.2)",
+        y: -3,
+        boxShadow: `
+          0 8px 32px rgba(0, 113, 227, 0.1),
+          0 2px 4px rgba(0, 0, 0, 0.02),
+          inset 0 1px 0 rgba(255, 255, 255, 1)
+        `,
       }}
     >
-      <div className="flex items-start justify-between mb-4">
+      {/* Top highlight */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-1/2"
+        style={{
+          background: "linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 100%)",
+          borderRadius: "20px 20px 0 0",
+        }}
+      />
+
+      <div className="relative flex items-start justify-between mb-4">
         <div>
           <span
-            className="text-xs uppercase tracking-wider"
-            style={{ color: "var(--text-muted)" }}
+            className="text-[10px] font-semibold uppercase tracking-[0.15em]"
+            style={{ color: "var(--text-ghost)" }}
           >
             {category}
           </span>
           <h4
-            className="text-lg font-light tracking-tight mt-1"
+            className="text-base font-medium tracking-tight mt-1"
             style={{ color: "var(--text-primary)" }}
           >
             {name}
           </h4>
         </div>
-        {icon && (
-          <span className="text-2xl opacity-60 group-hover:opacity-100 transition-opacity">
-            {icon}
-          </span>
-        )}
-      </div>
-
-      {/* iOS-style gradient progress bar */}
-      <div
-        className="relative h-1.5 rounded-full overflow-hidden"
-        style={{
-          background: "rgba(0, 0, 0, 0.06)",
-        }}
-      >
-        <motion.div
-          className="absolute inset-y-0 left-0 rounded-full"
-          style={{
-            background: "linear-gradient(90deg, #007aff 0%, #5856d6 50%, #34c759 100%)",
-          }}
-          initial={{ width: 0 }}
-          whileInView={{ width: `${level}%` }}
-          viewport={{ once: true }}
-          transition={{ duration: 1, delay: index * 0.05 + 0.3, ease: "easeOut" }}
-        />
-      </div>
-
-      {/* Level indicator */}
-      <div className="flex justify-between mt-2">
-        <span
-          className="text-xs"
-          style={{ color: "var(--text-muted)" }}
-        >
-          Proficiency
-        </span>
+        {/* Percentage */}
         <motion.span
-          className="text-xs font-medium"
+          className="text-sm font-semibold tabular-nums"
           style={{ color: "var(--accent)" }}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: index * 0.05 + 0.8 }}
+          transition={{ delay: index * 0.06 + 0.6 }}
         >
           {level}%
         </motion.span>
+      </div>
+
+      {/* Progress bar */}
+      <div
+        className="relative h-[6px] rounded-full overflow-hidden"
+        style={{ background: "rgba(0, 0, 0, 0.05)" }}
+      >
+        <motion.div
+          className="absolute inset-y-0 left-0 rounded-full"
+          style={{
+            background: "linear-gradient(90deg, var(--accent) 0%, var(--accent-secondary) 60%, var(--accent-tertiary) 100%)",
+            boxShadow: "0 0 16px var(--glow-accent)",
+          }}
+          initial={{ width: 0 }}
+          whileInView={{ width: `${level}%` }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.2, delay: index * 0.06 + 0.2, ease: [0.16, 1, 0.3, 1] }}
+        />
       </div>
     </motion.div>
   );
@@ -105,15 +107,16 @@ export function SkillCategory({ title, skills, category, startIndex }: SkillCate
   return (
     <div>
       <motion.h3
-        className="text-lg font-light tracking-tight mb-6"
+        className="text-lg font-medium tracking-tight mb-8"
         style={{ color: "var(--text-primary)" }}
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
       >
         {title}
       </motion.h3>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="space-y-3">
         {skills.map((skill, i) => (
           <SkillCard
             key={skill.name}

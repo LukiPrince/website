@@ -10,25 +10,22 @@ export function CustomCursor() {
 
   const cursorX = useMotionValue(0);
   const cursorY = useMotionValue(0);
-  const rotation = useMotionValue(0);
 
-  // Softer spring configs for iOS feel
-  const springConfig = { stiffness: 600, damping: 30, mass: 0.5 };
-  const trailConfig = { stiffness: 150, damping: 25, mass: 1 };
-  const morphConfig = { stiffness: 400, damping: 25 };
+  // Ultra-smooth spring configs
+  const springConfig = { stiffness: 500, damping: 28, mass: 0.5 };
+  const trailConfig = { stiffness: 120, damping: 22, mass: 1 };
+  const morphConfig = { stiffness: 350, damping: 28 };
 
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
   const trailXSpring = useSpring(cursorX, trailConfig);
   const trailYSpring = useSpring(cursorY, trailConfig);
-  const rotationSpring = useSpring(rotation, { stiffness: 100, damping: 20 });
 
-  const cursorSize = useSpring(6, morphConfig);
-  const trailSize = useSpring(36, morphConfig);
-  const trailOpacity = useSpring(0.4, morphConfig);
+  const cursorSize = useSpring(8, morphConfig);
+  const trailSize = useSpring(40, morphConfig);
+  const trailOpacity = useSpring(0.5, morphConfig);
   const borderRadius = useSpring(50, morphConfig);
 
-  // Transform hooks must be at top level
   const cursorMarginLeft = useTransform(cursorSize, (s) => -s / 2);
   const cursorMarginTop = useTransform(cursorSize, (s) => -s / 2);
   const trailMarginLeft = useTransform(trailSize, (s) => -s / 2);
@@ -48,16 +45,6 @@ export function CustomCursor() {
     if (isTouchDevice) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      const deltaX = e.clientX - lastX.current;
-      const deltaY = e.clientY - lastY.current;
-
-      const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
-      const velocity = Math.sqrt(deltaX ** 2 + deltaY ** 2);
-
-      if (velocity > 2) {
-        rotation.set(angle);
-      }
-
       cursorX.set(e.clientX);
       cursorY.set(e.clientY);
 
@@ -75,27 +62,27 @@ export function CustomCursor() {
       const interactiveElement = target.closest("a, button, [data-magnetic], [data-cursor-text]");
 
       if (interactiveElement) {
-        cursorSize.set(3);
-        trailSize.set(72);
-        trailOpacity.set(0.2);
+        cursorSize.set(4);
+        trailSize.set(80);
+        trailOpacity.set(0.25);
 
         const cursorTextAttr = interactiveElement.getAttribute("data-cursor-text");
         if (cursorTextAttr) {
           setHoverText(cursorTextAttr);
-          trailSize.set(90);
+          trailSize.set(100);
         }
 
         if (interactiveElement.hasAttribute("data-cursor-square")) {
-          borderRadius.set(16);
+          borderRadius.set(20);
         }
       }
     };
 
     const handleHoverEnd = () => {
       setHoverText(null);
-      cursorSize.set(6);
-      trailSize.set(36);
-      trailOpacity.set(0.4);
+      cursorSize.set(8);
+      trailSize.set(40);
+      trailOpacity.set(0.5);
       borderRadius.set(50);
     };
 
@@ -112,13 +99,13 @@ export function CustomCursor() {
       document.removeEventListener("mouseover", handleHoverStart);
       document.removeEventListener("mouseout", handleHoverEnd);
     };
-  }, [isTouchDevice, cursorX, cursorY, rotation, cursorSize, trailSize, trailOpacity, borderRadius]);
+  }, [isTouchDevice, cursorX, cursorY, cursorSize, trailSize, trailOpacity, borderRadius]);
 
   if (isTouchDevice) return null;
 
   return (
     <>
-      {/* Main cursor dot - iOS blue accent */}
+      {/* Main cursor dot - glowing accent */}
       <motion.div
         className="pointer-events-none fixed left-0 top-0 z-[9999]"
         style={{
@@ -140,13 +127,16 @@ export function CustomCursor() {
             className="absolute inset-0 rounded-full"
             style={{
               background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%)",
-              boxShadow: "0 0 12px var(--accent-glow), 0 0 24px rgba(0, 122, 255, 0.15)",
+              boxShadow: `
+                0 0 16px var(--glow-accent),
+                0 0 32px var(--glow-purple)
+              `,
             }}
           />
         </motion.div>
       </motion.div>
 
-      {/* Trailing glass ring - soft translucent */}
+      {/* Trailing liquid glass ring */}
       <motion.div
         className="pointer-events-none fixed left-0 top-0 z-[9998]"
         style={{
@@ -163,23 +153,38 @@ export function CustomCursor() {
             marginTop: trailMarginTop,
             opacity: isVisible ? 1 : 0,
             borderRadius: borderRadiusPercent,
-            rotate: rotationSpring,
           }}
         >
+          {/* Glass background */}
           <motion.div
             className="absolute inset-0"
             style={{
               borderRadius: borderRadiusPercent,
-              background: "rgba(255, 255, 255, 0.6)",
-              border: "1px solid rgba(0, 0, 0, 0.04)",
-              backdropFilter: "blur(12px) saturate(150%)",
-              boxShadow: "0 4px 16px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
+              background: "rgba(255, 255, 255, 0.5)",
+              border: "1px solid rgba(255, 255, 255, 0.6)",
+              backdropFilter: "blur(20px) saturate(180%)",
+              WebkitBackdropFilter: "blur(20px) saturate(180%)",
+              boxShadow: `
+                0 4px 20px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.02)
+              `,
               opacity: trailOpacity,
             }}
           />
+          {/* Top highlight */}
+          <motion.div
+            className="absolute inset-x-[1px] top-[1px] h-1/2 pointer-events-none"
+            style={{
+              borderRadius: borderRadiusPercent,
+              background: "linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, transparent 100%)",
+              opacity: trailOpacity,
+            }}
+          />
+          {/* Hover text */}
           {hoverText && (
             <motion.span
-              className="relative z-10 text-xs font-medium tracking-wide"
+              className="relative z-10 text-xs font-semibold tracking-wide"
               style={{ color: "var(--accent)" }}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}

@@ -16,6 +16,7 @@ import {
   EmailIcon,
 } from "@/components/SocialLink";
 import { useRef } from "react";
+import Link from "next/link";
 
 // Types for data
 export interface Experience {
@@ -81,6 +82,23 @@ const iconComponents = {
   email: <EmailIcon />,
 };
 
+// Admin FAB Icon
+function SettingsIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
 export function HomeClient({
   personalInfo,
   experiences,
@@ -94,17 +112,10 @@ export function HomeClient({
     offset: ["start start", "end start"],
   });
 
-  // Reduced parallax movement (150px instead of 300px)
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 150]);
-  // Faster scroll fade (0.25 threshold instead of 0.3)
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
-
-  // Softer spring configs
-  const softSpring = {
-    type: "spring" as const,
-    stiffness: 400,
-    damping: 25,
-  };
+  // Smooth parallax with reduced movement
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, 120]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.3], [1, 0.95]);
 
   return (
     <div ref={containerRef} className="relative">
@@ -113,96 +124,92 @@ export function HomeClient({
         <LiquidBlob />
       </div>
 
-      {/* Floating particles - iOS blue */}
+      {/* Floating particles */}
       <div className="pointer-events-none fixed inset-0 -z-5">
-        <FloatingParticle x="10%" y="20%" size={5} delay={0} duration={12} opacity={0.5} />
-        <FloatingParticle x="85%" y="15%" size={4} delay={0.5} duration={10} opacity={0.4} />
-        <FloatingParticle x="75%" y="60%" size={6} delay={1} duration={14} opacity={0.45} />
-        <FloatingParticle x="20%" y="70%" size={4} delay={0.3} duration={11} opacity={0.4} />
-        <FloatingParticle x="50%" y="85%" size={3} delay={0.8} duration={9} opacity={0.35} />
-        <FloatingParticle x="90%" y="45%" size={4} delay={1.2} duration={13} opacity={0.4} />
-        <FloatingParticle x="5%" y="50%" size={5} delay={0.6} duration={10} opacity={0.45} />
-        <FloatingParticle x="35%" y="30%" size={3} delay={1.5} duration={8} opacity={0.3} />
+        <FloatingParticle x="8%" y="15%" size={6} delay={0} duration={14} opacity={0.4} />
+        <FloatingParticle x="92%" y="12%" size={4} delay={0.5} duration={12} opacity={0.35} />
+        <FloatingParticle x="78%" y="55%" size={5} delay={1} duration={16} opacity={0.4} />
+        <FloatingParticle x="15%" y="65%" size={4} delay={0.3} duration={13} opacity={0.35} />
+        <FloatingParticle x="45%" y="80%" size={3} delay={0.8} duration={11} opacity={0.3} />
+        <FloatingParticle x="88%" y="40%" size={5} delay={1.2} duration={15} opacity={0.35} />
       </div>
+
+      {/* Admin FAB Button */}
+      <Link href="/admin" className="admin-fab touch-target" title="Admin Panel">
+        <SettingsIcon />
+      </Link>
 
       {/* ==================== HERO SECTION ==================== */}
       <motion.section
         className="relative flex min-h-screen flex-col items-center justify-center px-6"
-        style={{ y: heroY, opacity: heroOpacity }}
+        style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}
       >
-        {/* Top navigation hint */}
+        {/* Availability badge */}
         {personalInfo.available && (
           <motion.div
             className="absolute top-8 left-0 right-0 flex justify-center"
             initial={{ opacity: 0, y: -20, filter: "blur(10px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ delay: 2, duration: 0.8, ...softSpring }}
+            transition={{ delay: 2.2, duration: 0.8 }}
           >
-            <div
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-xs tracking-widest uppercase touch-target"
-              style={{
-                color: "var(--text-muted)",
-                background: "rgba(255, 255, 255, 0.72)",
-                border: "1px solid rgba(0, 0, 0, 0.06)",
-                backdropFilter: "blur(20px)",
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.04)",
-              }}
-            >
-              <span className="relative flex h-2 w-2">
+            <div className="glass-panel-subtle flex items-center gap-2.5 px-5 py-2.5 text-xs font-medium tracking-wide">
+              <span className="relative flex h-2.5 w-2.5">
                 <span
-                  className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"
-                  style={{ backgroundColor: "#34c759" }}
+                  className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-60"
+                  style={{ backgroundColor: "var(--accent-tertiary)" }}
                 />
                 <span
-                  className="relative inline-flex h-2 w-2 rounded-full"
-                  style={{ backgroundColor: "#34c759" }}
+                  className="relative inline-flex h-2.5 w-2.5 rounded-full"
+                  style={{ backgroundColor: "var(--accent-tertiary)" }}
                 />
               </span>
-              Available for projects
+              <span style={{ color: "var(--text-secondary)" }}>
+                Available for projects
+              </span>
             </div>
           </motion.div>
         )}
 
         {/* Main content */}
         <div className="relative z-10 flex max-w-5xl flex-col items-center text-center">
-          {/* Eyebrow text */}
+          {/* Eyebrow */}
           <motion.p
-            className="mb-6 text-sm tracking-[0.3em] uppercase"
+            className="mb-8 text-sm font-medium tracking-[0.35em] uppercase"
             style={{ color: "var(--text-muted)" }}
-            initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+            initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ delay: 0.2, duration: 0.8 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
           >
             {personalInfo.tagline}
           </motion.p>
 
-          {/* Main headline - using fluid typography */}
+          {/* Main headline */}
           <AnimatedText
             text={personalInfo.headline}
             className="fluid-heading-xl font-light tracking-tight"
             style={{ color: "var(--text-primary)" }}
-            parallaxStrength={0.008}
-            italic={[1, 4]}
-            accent={[4]}
+            parallaxStrength={0.006}
+            italic={[1, 3]}
+            accent={[3]}
           />
 
           {/* Subtitle */}
           <motion.p
-            className="mt-8 max-w-xl text-base leading-relaxed sm:text-lg"
+            className="mt-10 max-w-2xl fluid-body-lg leading-relaxed"
             style={{ color: "var(--text-secondary)" }}
-            initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+            initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ delay: 1.2, duration: 0.8 }}
+            transition={{ delay: 1.4, duration: 0.8 }}
           >
             {personalInfo.subtitle}
           </motion.p>
 
           {/* CTA buttons */}
           <motion.div
-            className="mt-12 flex flex-col gap-4 sm:flex-row sm:gap-6"
-            initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+            className="mt-14 flex flex-col gap-4 sm:flex-row sm:gap-5"
+            initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ delay: 1.5, duration: 0.8 }}
+            transition={{ delay: 1.7, duration: 0.8 }}
           >
             <MagneticButton
               href="#work"
@@ -217,7 +224,7 @@ export function HomeClient({
               href="#contact"
               variant="secondary"
               className="flex h-14 items-center justify-center px-10 text-sm font-medium tracking-wide touch-target"
-              cursorText="Say hi"
+              cursorText="Hello"
             >
               Get in Touch
             </MagneticButton>
@@ -229,20 +236,23 @@ export function HomeClient({
           className="absolute bottom-12 left-1/2 -translate-x-1/2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 2.5, duration: 1 }}
+          transition={{ delay: 2.8, duration: 1 }}
         >
           <motion.div
             className="flex flex-col items-center gap-3"
-            animate={{ y: [0, 6, 0] }}
+            animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
           >
-            <span className="text-xs tracking-widest uppercase" style={{ color: "var(--text-muted)" }}>
+            <span
+              className="text-xs font-medium tracking-[0.2em] uppercase"
+              style={{ color: "var(--text-ghost)" }}
+            >
               Scroll
             </span>
             <div
-              className="h-12 w-[1px]"
+              className="h-10 w-[1px]"
               style={{
-                background: `linear-gradient(to bottom, var(--text-muted), transparent)`,
+                background: "linear-gradient(to bottom, var(--text-muted), transparent)",
               }}
             />
           </motion.div>
@@ -250,14 +260,13 @@ export function HomeClient({
       </motion.section>
 
       {/* ==================== ABOUT SECTION ==================== */}
-      <section id="about" className="relative px-6 py-32">
+      <section id="about" className="relative px-6 py-32 lg:py-40">
         <div className="mx-auto max-w-6xl">
-          <div className="grid gap-12 md:grid-cols-2 md:gap-16 items-center">
+          <div className="grid gap-16 lg:grid-cols-2 lg:gap-24 items-start">
             {/* Left: Section title */}
-            <div>
+            <div className="lg:sticky lg:top-32">
               <motion.span
-                className="text-sm tracking-[0.3em] uppercase"
-                style={{ color: "var(--accent)" }}
+                className="text-sm font-semibold tracking-[0.2em] uppercase text-gradient-accent"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
@@ -266,47 +275,54 @@ export function HomeClient({
                 About
               </motion.span>
               <motion.h2
-                className="mt-4 fluid-heading-lg font-light tracking-tight"
+                className="mt-5 fluid-heading-lg font-light tracking-tight"
                 style={{ color: "var(--text-primary)" }}
-                initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+                initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
                 whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.2 }}
+                transition={{ duration: 0.8, delay: 0.15 }}
               >
-                {personalInfo.aboutTitle.split(" ").map((word, i) =>
-                  i === personalInfo.aboutTitle.split(" ").length - 1 ? (
-                    <span key={i} style={{ fontFamily: "var(--font-serif)", fontStyle: "italic" }}>
-                      {word}
-                    </span>
-                  ) : (
-                    <span key={i}>{word} </span>
-                  )
-                )}
+                {personalInfo.aboutTitle.split(" ").slice(0, -1).join(" ")}{" "}
+                <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic" }}>
+                  {personalInfo.aboutTitle.split(" ").slice(-1)[0]}
+                </span>
               </motion.h2>
 
-              <motion.p
-                className="mt-4 text-sm"
-                style={{ color: "var(--text-muted)" }}
+              <motion.div
+                className="mt-6 flex items-center gap-2"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.3 }}
+                transition={{ duration: 0.8, delay: 0.25 }}
               >
-                {personalInfo.location}
-              </motion.p>
+                <svg
+                  className="w-4 h-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  style={{ color: "var(--accent)" }}
+                >
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+                <span className="text-sm font-medium" style={{ color: "var(--text-muted)" }}>
+                  {personalInfo.location}
+                </span>
+              </motion.div>
             </div>
 
             {/* Right: About text */}
-            <div className="space-y-6">
+            <div className="space-y-8">
               {personalInfo.aboutText.map((paragraph, i) => (
                 <motion.p
                   key={i}
-                  className="text-base leading-relaxed"
+                  className="text-lg leading-relaxed"
                   style={{ color: "var(--text-secondary)" }}
-                  initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+                  initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
                   whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.2 + i * 0.1 }}
+                  transition={{ duration: 0.8, delay: 0.2 + i * 0.12 }}
                 >
                   {paragraph}
                 </motion.p>
@@ -317,14 +333,15 @@ export function HomeClient({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.5 }}
+                className="pt-4"
               >
                 <MagneticButton
                   href="#experience"
                   variant="ghost"
-                  className="text-sm font-medium mt-4"
+                  className="text-sm font-medium"
                   strength={0.2}
                 >
-                  View my experience →
+                  View my experience
                 </MagneticButton>
               </motion.div>
             </div>
@@ -333,13 +350,12 @@ export function HomeClient({
       </section>
 
       {/* ==================== EXPERIENCE SECTION ==================== */}
-      <section id="experience" className="relative px-6 py-32">
+      <section id="experience" className="relative px-6 py-32 lg:py-40">
         <div className="mx-auto max-w-4xl">
           {/* Section header */}
-          <div className="mb-16 text-center">
+          <div className="mb-20 text-center">
             <motion.span
-              className="text-sm tracking-[0.3em] uppercase"
-              style={{ color: "var(--accent)" }}
+              className="text-sm font-semibold tracking-[0.2em] uppercase text-gradient-accent"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
@@ -348,12 +364,12 @@ export function HomeClient({
               Experience
             </motion.span>
             <motion.h2
-              className="mt-4 fluid-heading-lg font-light tracking-tight"
+              className="mt-5 fluid-heading-lg font-light tracking-tight"
               style={{ color: "var(--text-primary)" }}
-              initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+              initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
               whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              transition={{ duration: 0.8, delay: 0.15 }}
             >
               My{" "}
               <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic" }}>
@@ -382,13 +398,12 @@ export function HomeClient({
       </section>
 
       {/* ==================== SKILLS SECTION ==================== */}
-      <section id="skills" className="relative px-6 py-32">
+      <section id="skills" className="relative px-6 py-32 lg:py-40">
         <div className="mx-auto max-w-6xl">
           {/* Section header */}
-          <div className="mb-16">
+          <div className="mb-20">
             <motion.span
-              className="text-sm tracking-[0.3em] uppercase"
-              style={{ color: "var(--accent)" }}
+              className="text-sm font-semibold tracking-[0.2em] uppercase text-gradient-accent"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
@@ -397,12 +412,12 @@ export function HomeClient({
               Skills
             </motion.span>
             <motion.h2
-              className="mt-4 fluid-heading-lg font-light tracking-tight"
+              className="mt-5 fluid-heading-lg font-light tracking-tight"
               style={{ color: "var(--text-primary)" }}
-              initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+              initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
               whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              transition={{ duration: 0.8, delay: 0.15 }}
             >
               Technologies I{" "}
               <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic" }}>
@@ -412,7 +427,7 @@ export function HomeClient({
           </div>
 
           {/* Skills grid */}
-          <div className="grid gap-12 md:grid-cols-3">
+          <div className="grid gap-12 lg:grid-cols-3 lg:gap-8">
             <SkillCategory
               title={skills.frontend.title}
               skills={skills.frontend.skills}
@@ -436,13 +451,12 @@ export function HomeClient({
       </section>
 
       {/* ==================== PROJECTS SECTION ==================== */}
-      <section id="work" className="relative px-6 py-32">
+      <section id="work" className="relative px-6 py-32 lg:py-40">
         <div className="mx-auto max-w-6xl">
           {/* Section header */}
           <div className="mb-20">
             <motion.span
-              className="text-sm tracking-[0.3em] uppercase"
-              style={{ color: "var(--accent)" }}
+              className="text-sm font-semibold tracking-[0.2em] uppercase text-gradient-accent"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
@@ -451,40 +465,40 @@ export function HomeClient({
               Selected Work
             </motion.span>
             <motion.h2
-              className="mt-4 fluid-heading-lg font-light tracking-tight"
+              className="mt-5 fluid-heading-lg font-light tracking-tight"
               style={{ color: "var(--text-primary)" }}
-              initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+              initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
               whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              transition={{ duration: 0.8, delay: 0.15 }}
             >
               Projects that{" "}
               <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic" }}>
-                push boundaries
+                inspire
               </span>
             </motion.h2>
           </div>
 
           {/* Project cards grid */}
-          <div className="grid gap-8 md:grid-cols-2">
+          <div className="grid gap-8 lg:grid-cols-2">
             {projects.map((project, i) => (
               <motion.div
                 key={project.title}
-                initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
+                initial={{ opacity: 0, y: 40, filter: "blur(8px)" }}
                 whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.8, delay: i * 0.15 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.8, delay: i * 0.12 }}
               >
-                <GlassCard className="group h-full">
-                  <div className="p-8">
+                <GlassCard className="group h-full interactive-lift">
+                  <div className="p-8 lg:p-10">
                     <span
-                      className="text-xs tracking-widest uppercase"
+                      className="text-xs font-semibold tracking-[0.15em] uppercase"
                       style={{ color: "var(--accent)" }}
                     >
                       {project.category}
                     </span>
                     <h3
-                      className="mt-3 text-2xl font-light tracking-tight transition-colors duration-300 group-hover:text-[var(--accent)]"
+                      className="mt-4 text-2xl font-light tracking-tight transition-colors duration-300 group-hover:text-[var(--accent)]"
                       style={{ color: "var(--text-primary)" }}
                     >
                       {project.title}
@@ -496,47 +510,49 @@ export function HomeClient({
                       {project.description}
                     </p>
 
-                    {/* Placeholder for project image */}
+                    {/* Project visual placeholder */}
                     <div
-                      className="mt-6 aspect-[16/10] rounded-2xl overflow-hidden"
+                      className="mt-8 aspect-[16/9] rounded-2xl overflow-hidden"
                       style={{
-                        background: `linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.3) 100%)`,
-                        border: "1px solid rgba(0, 0, 0, 0.04)",
+                        background:
+                          "linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.3) 100%)",
+                        border: "1px solid rgba(255, 255, 255, 0.5)",
                       }}
                     >
                       <motion.div
                         className="h-full w-full"
                         style={{
-                          background: `radial-gradient(circle at 30% 30%, var(--accent-glow) 0%, transparent 50%)`,
+                          background:
+                            "radial-gradient(circle at 30% 30%, var(--glow-accent) 0%, transparent 60%)",
                         }}
                         animate={{
                           background: [
-                            `radial-gradient(circle at 30% 30%, var(--accent-glow) 0%, transparent 50%)`,
-                            `radial-gradient(circle at 70% 70%, var(--accent-glow) 0%, transparent 50%)`,
-                            `radial-gradient(circle at 30% 30%, var(--accent-glow) 0%, transparent 50%)`,
+                            "radial-gradient(circle at 30% 30%, var(--glow-accent) 0%, transparent 60%)",
+                            "radial-gradient(circle at 70% 60%, var(--glow-purple) 0%, transparent 60%)",
+                            "radial-gradient(circle at 30% 30%, var(--glow-accent) 0%, transparent 60%)",
                           ],
                         }}
-                        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                        transition={{
+                          duration: 10,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                        }}
                       />
                     </div>
 
                     {/* View project link */}
-                    <div className="mt-6 flex items-center justify-between">
+                    <div className="mt-8 flex items-center justify-between">
                       <MagneticButton
                         href={project.link}
                         variant="ghost"
                         className="text-sm font-medium"
-                        strength={0.2}
+                        strength={0.15}
                       >
                         View Project
                       </MagneticButton>
                       <motion.div
-                        className="h-8 w-8 rounded-full flex items-center justify-center touch-target"
-                        style={{
-                          background: "rgba(255, 255, 255, 0.72)",
-                          border: "1px solid rgba(0, 0, 0, 0.06)",
-                        }}
-                        whileHover={{ scale: 1.1, rotate: 45 }}
+                        className="h-10 w-10 rounded-xl flex items-center justify-center touch-target glass-panel-subtle"
+                        whileHover={{ scale: 1.08, rotate: 45 }}
                         transition={{ duration: 0.3 }}
                       >
                         <svg
@@ -565,13 +581,12 @@ export function HomeClient({
       </section>
 
       {/* ==================== CONTACT SECTION ==================== */}
-      <section id="contact" className="relative px-6 py-32">
+      <section id="contact" className="relative px-6 py-32 lg:py-40">
         <div className="mx-auto max-w-4xl">
           {/* Section header */}
-          <div className="mb-16 text-center">
+          <div className="mb-20 text-center">
             <motion.span
-              className="text-sm tracking-[0.3em] uppercase"
-              style={{ color: "var(--accent)" }}
+              className="text-sm font-semibold tracking-[0.2em] uppercase text-gradient-accent"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
@@ -580,12 +595,12 @@ export function HomeClient({
               Contact
             </motion.span>
             <motion.h2
-              className="mt-4 fluid-heading-lg font-light tracking-tight"
+              className="mt-5 fluid-heading-lg font-light tracking-tight"
               style={{ color: "var(--text-primary)" }}
-              initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+              initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
               whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              transition={{ duration: 0.8, delay: 0.15 }}
             >
               Let&apos;s{" "}
               <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic" }}>
@@ -593,15 +608,14 @@ export function HomeClient({
               </span>
             </motion.h2>
             <motion.p
-              className="mt-6 max-w-lg mx-auto text-base leading-relaxed"
+              className="mt-8 max-w-lg mx-auto text-lg leading-relaxed"
               style={{ color: "var(--text-secondary)" }}
-              initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+              initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
               whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.3 }}
+              transition={{ duration: 0.8, delay: 0.25 }}
             >
               Have a project in mind or just want to say hello? I&apos;d love to hear from you.
-              Feel free to reach out through any of the channels below.
             </motion.p>
           </div>
 
@@ -618,18 +632,18 @@ export function HomeClient({
             ))}
           </div>
 
-          {/* CTA */}
+          {/* Primary CTA */}
           <motion.div
-            className="mt-16 text-center"
+            className="mt-20 text-center"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.5 }}
           >
             <MagneticButton
-              href={`mailto:${socialLinks.find(l => l.iconType === 'email')?.href.replace('mailto:', '') || 'your@email.com'}`}
+              href="mailto:lukaswotzka@icloud.com"
               variant="primary"
-              className="inline-flex h-14 items-center justify-center px-10 text-sm font-medium tracking-wide touch-target"
+              className="inline-flex h-14 items-center justify-center px-12 text-sm font-medium tracking-wide touch-target"
               cursorText="Email"
             >
               Start a Conversation
@@ -640,30 +654,29 @@ export function HomeClient({
 
       {/* ==================== FOOTER ==================== */}
       <footer
-        className="relative px-6 py-12 border-t"
-        style={{ borderColor: "rgba(0, 0, 0, 0.06)" }}
+        className="relative px-6 py-16"
+        style={{ borderTop: "1px solid rgba(0, 0, 0, 0.04)" }}
       >
         <div className="mx-auto max-w-6xl">
-          <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
+          <div className="flex flex-col items-center justify-between gap-8 sm:flex-row">
             <motion.p
-              className="text-sm"
+              className="text-sm font-medium"
               style={{ color: "var(--text-muted)" }}
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
             >
-              © {new Date().getFullYear()} {personalInfo.name}. All rights reserved.
+              &copy; {new Date().getFullYear()} {personalInfo.name}
             </motion.p>
 
             <motion.p
               className="text-sm"
-              style={{ color: "var(--text-muted)" }}
+              style={{ color: "var(--text-ghost)" }}
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
             >
-              Crafted with{" "}
-              <span style={{ color: "var(--accent)" }}>♥</span> using Next.js & Framer Motion
+              Crafted with precision
             </motion.p>
           </div>
         </div>
@@ -671,9 +684,9 @@ export function HomeClient({
 
       {/* Bottom gradient fade */}
       <div
-        className="pointer-events-none fixed bottom-0 left-0 right-0 h-32"
+        className="pointer-events-none fixed bottom-0 left-0 right-0 h-24"
         style={{
-          background: `linear-gradient(to top, var(--bg-primary), transparent)`,
+          background: "linear-gradient(to top, var(--bg-primary), transparent)",
         }}
       />
     </div>

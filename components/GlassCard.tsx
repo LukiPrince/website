@@ -12,13 +12,13 @@ interface GlassCardProps {
 export function GlassCard({
   children,
   className = "",
-  tiltStrength = 8,
+  tiltStrength = 6,
 }: GlassCardProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(true);
 
   useEffect(() => {
-    setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window);
+    setIsMobile(window.innerWidth < 768 || "ontouchstart" in window);
   }, []);
 
   const rotateX = useMotionValue(0);
@@ -26,8 +26,8 @@ export function GlassCard({
   const glareX = useMotionValue(50);
   const glareY = useMotionValue(50);
 
-  // Softer spring config for iOS feel
-  const springConfig = { stiffness: 400, damping: 25 };
+  // Silky smooth spring
+  const springConfig = { stiffness: 300, damping: 30 };
   const rotateXSpring = useSpring(rotateX, springConfig);
   const rotateYSpring = useSpring(rotateY, springConfig);
 
@@ -47,8 +47,8 @@ export function GlassCard({
     rotateX.set(-percentY * tiltStrength);
     rotateY.set(percentX * tiltStrength);
 
-    glareX.set(50 + percentX * 25);
-    glareY.set(50 + percentY * 25);
+    glareX.set(50 + percentX * 30);
+    glareY.set(50 + percentY * 30);
   };
 
   const handleMouseLeave = () => {
@@ -58,24 +58,46 @@ export function GlassCard({
     glareY.set(50);
   };
 
+  // Dynamic glare that follows mouse
   const glareBackground = useTransform(
     [glareX, glareY],
     ([x, y]) =>
-      `radial-gradient(ellipse at ${x}% ${y}%, rgba(255, 255, 255, 0.3) 0%, transparent 60%)`
+      `radial-gradient(ellipse 60% 40% at ${x}% ${y}%, rgba(255, 255, 255, 0.35) 0%, transparent 50%)`
   );
 
-  // Simplified card for mobile - reduced blur for performance
+  // Edge highlight
+  const edgeHighlight = useTransform(
+    [glareX, glareY],
+    ([x, y]) => {
+      const angle = Math.atan2((y as number) - 50, (x as number) - 50) * (180 / Math.PI);
+      return `linear-gradient(${angle + 90}deg, rgba(255, 255, 255, 0.4) 0%, transparent 30%, transparent 70%, rgba(255, 255, 255, 0.1) 100%)`;
+    }
+  );
+
+  // Mobile version - simplified glass
   if (isMobile) {
     return (
       <div className={`relative ${className}`}>
         <div
-          className="absolute inset-0 rounded-3xl"
+          className="absolute inset-0 rounded-[28px]"
           style={{
-            background: "var(--glass-bg)",
-            border: "1px solid var(--glass-border)",
-            backdropFilter: "blur(30px) saturate(150%)",
-            WebkitBackdropFilter: "blur(30px) saturate(150%)",
-            boxShadow: "var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
+            background: "rgba(255, 255, 255, 0.65)",
+            border: "1px solid rgba(255, 255, 255, 0.5)",
+            backdropFilter: "blur(40px) saturate(160%)",
+            WebkitBackdropFilter: "blur(40px) saturate(160%)",
+            boxShadow: `
+              0 8px 32px rgba(0, 0, 0, 0.08),
+              0 4px 8px rgba(0, 0, 0, 0.04),
+              inset 0 1px 0 rgba(255, 255, 255, 1)
+            `,
+          }}
+        />
+        {/* Top highlight */}
+        <div
+          className="absolute inset-x-[1px] top-[1px] h-1/3 rounded-t-[27px] pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, transparent 100%)",
           }}
         />
         <div className="relative z-10">{children}</div>
@@ -96,35 +118,60 @@ export function GlassCard({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Background glass layer */}
+      {/* Main glass layer */}
       <div
-        className="absolute inset-0 rounded-3xl"
+        className="absolute inset-0 rounded-[28px]"
         style={{
-          background: "var(--glass-bg)",
-          border: "1px solid var(--glass-border)",
-          backdropFilter: "blur(60px) saturate(180%)",
-          WebkitBackdropFilter: "blur(60px) saturate(180%)",
+          background: "rgba(255, 255, 255, 0.65)",
+          border: "1px solid rgba(255, 255, 255, 0.5)",
+          backdropFilter: "blur(80px) saturate(200%)",
+          WebkitBackdropFilter: "blur(80px) saturate(200%)",
           boxShadow: `
-            var(--shadow-lg),
-            inset 0 1px 0 rgba(255, 255, 255, 0.5),
-            inset 0 -1px 0 rgba(0, 0, 0, 0.03)
+            0 8px 32px rgba(0, 0, 0, 0.08),
+            0 4px 8px rgba(0, 0, 0, 0.04),
+            0 1px 2px rgba(0, 0, 0, 0.02),
+            inset 0 1px 0 rgba(255, 255, 255, 1),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.02)
           `,
         }}
       />
 
-      {/* Inner highlight for depth */}
+      {/* Top refraction highlight */}
       <div
-        className="pointer-events-none absolute inset-[1px] rounded-3xl"
+        className="pointer-events-none absolute inset-x-[1px] top-[1px] h-2/5 rounded-t-[27px]"
         style={{
-          background: "linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 40%)",
-          opacity: 0.6,
+          background: `
+            linear-gradient(
+              180deg,
+              rgba(255, 255, 255, 0.6) 0%,
+              rgba(255, 255, 255, 0.2) 40%,
+              transparent 100%
+            )
+          `,
         }}
       />
 
-      {/* Dynamic glare effect */}
+      {/* Edge highlight layer */}
       <motion.div
-        className="pointer-events-none absolute inset-0 rounded-3xl opacity-60"
+        className="pointer-events-none absolute inset-0 rounded-[28px]"
+        style={{ background: edgeHighlight, opacity: 0.5 }}
+      />
+
+      {/* Dynamic glare */}
+      <motion.div
+        className="pointer-events-none absolute inset-0 rounded-[28px]"
         style={{ background: glareBackground }}
+      />
+
+      {/* Subtle inner shadow for depth */}
+      <div
+        className="pointer-events-none absolute inset-0 rounded-[28px]"
+        style={{
+          boxShadow: `
+            inset 0 0 60px rgba(255, 255, 255, 0.1),
+            inset 0 0 20px rgba(255, 255, 255, 0.05)
+          `,
+        }}
       />
 
       <div className="relative z-10">{children}</div>
