@@ -1,46 +1,39 @@
 import { cookies } from "next/headers";
-import bcrypt from "bcryptjs";
 
 const ADMIN_COOKIE_NAME = "admin_session";
 const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
-// Get the password hash from environment variable
-function getPasswordHash(): string {
-  const hash = process.env.ADMIN_PASSWORD_HASH;
-  if (!hash) {
-    throw new Error("ADMIN_PASSWORD_HASH environment variable is not set");
+// Get the password from environment variable
+// For Edge Runtime, we use a simple comparison (store plain password in env)
+// For production, consider using a proper auth service
+function getAdminPassword(): string {
+  const password = process.env.ADMIN_PASSWORD;
+  if (!password) {
+    throw new Error("ADMIN_PASSWORD environment variable is not set");
   }
-  return hash;
+  return password;
 }
 
-// Verify password against stored hash
+// Verify password - simple comparison for Edge Runtime compatibility
 export async function verifyPassword(password: string): Promise<boolean> {
   try {
-    const hash = getPasswordHash();
-    return await bcrypt.compare(password, hash);
+    const storedPassword = getAdminPassword();
+    return password === storedPassword;
   } catch {
     return false;
   }
 }
 
-// Hash a password (utility for generating the hash to put in .env)
-export async function hashPassword(password: string): Promise<string> {
-  return await bcrypt.hash(password, 12);
-}
-
-// Create a simple session token
-function generateSessionToken(): string {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  for (let i = 0; i < 64; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
+// Create a simple session token using Web Crypto API (Edge compatible)
+async function generateSessionToken(): Promise<string> {
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
 // Set the admin session cookie
 export async function setAdminSession(): Promise<string> {
-  const token = generateSessionToken();
+  const token = await generateSessionToken();
   const expiresAt = Date.now() + SESSION_DURATION;
   const sessionData = JSON.stringify({ token, expiresAt });
 
@@ -85,9 +78,4 @@ export async function isAdminAuthenticated(): Promise<boolean> {
 export async function clearAdminSession(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete(ADMIN_COOKIE_NAME);
-}
-
-// Utility to generate a password hash (for use in CLI or setup)
-export function generatePasswordHashSync(password: string): string {
-  return bcrypt.hashSync(password, 12);
 }

@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/auth";
-import {
-  getExperiences,
-  saveExperience,
-  generateExperienceFilename,
-} from "@/lib/content";
+import { getExperiences } from "@/lib/content";
+
+export const runtime = "edge";
 
 // GET - List all experiences
 export async function GET() {
@@ -20,10 +18,9 @@ export async function GET() {
   }
 }
 
-// POST - Create new experience
+// POST - Create new experience (not available on Edge - returns informational message)
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
     const isAuthenticated = await isAdminAuthenticated();
     if (!isAuthenticated) {
       return NextResponse.json(
@@ -32,51 +29,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-    const { year, title, company, description, technologies } = body;
-
-    // Validate required fields
-    if (!year || !title || !company) {
-      return NextResponse.json(
-        { error: "Year, title, and company are required" },
-        { status: 400 }
-      );
-    }
-
-    // Get current experiences to determine order
-    const experiences = await getExperiences();
-    const order = experiences.length + 1;
-
-    // Generate filename
-    const slug = generateExperienceFilename(order, title);
-
-    // Save the experience
-    await saveExperience(slug, {
-      order,
-      year,
-      title,
-      company,
-      description: description || "",
-      technologies: technologies || [],
-    });
-
-    return NextResponse.json({
-      success: true,
-      slug,
-      experience: {
-        order,
-        year,
-        title,
-        company,
-        description: description || "",
-        technologies: technologies || [],
-        slug,
-      },
-    });
-  } catch (error) {
-    console.error("Error creating experience:", error);
     return NextResponse.json(
-      { error: "Failed to create experience" },
+      {
+        error: "Write operations not available on Cloudflare Edge Runtime",
+        message: "To add experiences, edit the source files in content/experiences/ and redeploy"
+      },
+      { status: 501 }
+    );
+  } catch (error) {
+    console.error("Error:", error);
+    return NextResponse.json(
+      { error: "Operation failed" },
       { status: 500 }
     );
   }

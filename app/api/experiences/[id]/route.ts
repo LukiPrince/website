@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/auth";
-import {
-  getExperience,
-  saveExperience,
-  deleteExperience,
-} from "@/lib/content";
+import { getExperience } from "@/lib/content";
+
+export const runtime = "edge";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -36,13 +34,12 @@ export async function GET(
   }
 }
 
-// PUT - Update experience
+// PUT - Update experience (not available on Edge)
 export async function PUT(
   request: NextRequest,
   { params }: RouteParams
 ) {
   try {
-    // Check authentication
     const isAuthenticated = await isAdminAuthenticated();
     if (!isAuthenticated) {
       return NextResponse.json(
@@ -51,57 +48,28 @@ export async function PUT(
       );
     }
 
-    const { id } = await params;
-    const body = await request.json();
-    const { order, year, title, company, description, technologies } = body;
-
-    // Check if experience exists
-    const existing = await getExperience(id);
-    if (!existing) {
-      return NextResponse.json(
-        { error: "Experience not found" },
-        { status: 404 }
-      );
-    }
-
-    // Update the experience
-    await saveExperience(id, {
-      order: order ?? existing.order,
-      year: year ?? existing.year,
-      title: title ?? existing.title,
-      company: company ?? existing.company,
-      description: description ?? existing.description,
-      technologies: technologies ?? existing.technologies,
-    });
-
-    return NextResponse.json({
-      success: true,
-      experience: {
-        slug: id,
-        order: order ?? existing.order,
-        year: year ?? existing.year,
-        title: title ?? existing.title,
-        company: company ?? existing.company,
-        description: description ?? existing.description,
-        technologies: technologies ?? existing.technologies,
-      },
-    });
-  } catch (error) {
-    console.error("Error updating experience:", error);
     return NextResponse.json(
-      { error: "Failed to update experience" },
+      {
+        error: "Write operations not available on Cloudflare Edge Runtime",
+        message: "To update experiences, edit the source files in content/experiences/ and redeploy"
+      },
+      { status: 501 }
+    );
+  } catch (error) {
+    console.error("Error:", error);
+    return NextResponse.json(
+      { error: "Operation failed" },
       { status: 500 }
     );
   }
 }
 
-// DELETE - Delete experience
+// DELETE - Delete experience (not available on Edge)
 export async function DELETE(
   request: NextRequest,
   { params }: RouteParams
 ) {
   try {
-    // Check authentication
     const isAuthenticated = await isAdminAuthenticated();
     if (!isAuthenticated) {
       return NextResponse.json(
@@ -110,24 +78,17 @@ export async function DELETE(
       );
     }
 
-    const { id } = await params;
-
-    // Check if experience exists
-    const existing = await getExperience(id);
-    if (!existing) {
-      return NextResponse.json(
-        { error: "Experience not found" },
-        { status: 404 }
-      );
-    }
-
-    await deleteExperience(id);
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Error deleting experience:", error);
     return NextResponse.json(
-      { error: "Failed to delete experience" },
+      {
+        error: "Write operations not available on Cloudflare Edge Runtime",
+        message: "To delete experiences, remove the file from content/experiences/ and redeploy"
+      },
+      { status: 501 }
+    );
+  } catch (error) {
+    console.error("Error:", error);
+    return NextResponse.json(
+      { error: "Operation failed" },
       { status: 500 }
     );
   }

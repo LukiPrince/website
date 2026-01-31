@@ -2,6 +2,8 @@ import { isAdminAuthenticated } from "@/lib/auth";
 import { LoginForm } from "@/components/admin/LoginForm";
 import { AdminNav } from "@/components/admin/AdminNav";
 
+export const runtime = "edge";
+
 export const metadata = {
   title: "Admin Panel | Portfolio",
   description: "Manage your portfolio content",

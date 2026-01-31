@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyPassword, setAdminSession, clearAdminSession, isAdminAuthenticated } from "@/lib/auth";
 
+export const runtime = "edge";
+
 // POST - Login
 export async function POST(request: NextRequest) {
   try {

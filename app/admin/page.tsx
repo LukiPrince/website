@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getExperiences, getSkills, getSiteConfig } from "@/lib/content";
 import { AdminCard } from "@/components/admin/AdminCard";
 
+export const runtime = "edge";
+
 export default async function AdminDashboard() {
   const [experiences, skills, config] = await Promise.all([
     getExperiences(),
@@ -46,7 +48,13 @@ export default async function AdminDashboard() {
           className="mt-2 text-sm"
           style={{ color: "var(--text-secondary)" }}
         >
-          Welcome to your portfolio admin panel. Manage your content here.
+          Welcome to your portfolio admin panel. View your content here.
+        </p>
+        <p
+          className="mt-1 text-xs"
+          style={{ color: "var(--text-muted)" }}
+        >
+          Note: On Cloudflare, editing is disabled. Update source files and redeploy to make changes.
         </p>
       </div>
 
@@ -101,7 +109,8 @@ export default async function AdminDashboard() {
                 stroke="currentColor"
                 strokeWidth="2"
               >
-                <path d="M12 5v14M5 12h14" />
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
               </svg>
             </div>
             <div>
@@ -109,13 +118,13 @@ export default async function AdminDashboard() {
                 className="font-medium"
                 style={{ color: "var(--text-primary)" }}
               >
-                Add Experience
+                View Experiences
               </p>
               <p
                 className="text-sm"
                 style={{ color: "var(--text-secondary)" }}
               >
-                Add a new work experience
+                See your work history
               </p>
             </div>
           </Link>
@@ -148,13 +157,13 @@ export default async function AdminDashboard() {
                 className="font-medium"
                 style={{ color: "var(--text-primary)" }}
               >
-                Edit Skills
+                View Skills
               </p>
               <p
                 className="text-sm"
                 style={{ color: "var(--text-secondary)" }}
               >
-                Update skill levels
+                See skill levels
               </p>
             </div>
           </Link>
