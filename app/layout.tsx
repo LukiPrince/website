@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { MouseProvider } from "@/components/MouseProvider";
 import { CustomCursor } from "@/components/CustomCursor";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,10 +34,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <MouseProvider>
-          <CustomCursor />
-          {children}
-        </MouseProvider>
+        <ThemeProvider>
+          <MouseProvider>
+            <CustomCursor />
+            {children}
+          </MouseProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

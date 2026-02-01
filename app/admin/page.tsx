@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getExperiences, getSkills, getSiteConfig } from "@/lib/content";
 import { AdminCard } from "@/components/admin/AdminCard";
+import { ThemeSwitcher } from "@/components/admin/ThemeSwitcher";
 
 export const runtime = "edge";
 
@@ -80,95 +81,99 @@ export default async function AdminDashboard() {
         ))}
       </div>
 
-      {/* Quick Actions */}
-      <AdminCard>
-        <h2
-          className="text-lg font-medium mb-4"
-          style={{ color: "var(--text-primary)" }}
-        >
-          Quick Actions
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Link
-            href="/admin/experiences"
-            className="flex items-center gap-4 p-4 rounded-xl transition-colors"
-            style={{
-              background: "rgba(0, 122, 255, 0.05)",
-              border: "1px solid rgba(0, 122, 255, 0.1)",
-            }}
+      {/* Quick Actions & Theme */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <AdminCard>
+          <h2
+            className="text-lg font-medium mb-4"
+            style={{ color: "var(--text-primary)" }}
           >
-            <div
-              className="w-10 h-10 rounded-full flex items-center justify-center"
-              style={{ background: "var(--accent)", color: "white" }}
+            Quick Actions
+          </h2>
+          <div className="grid gap-4">
+            <Link
+              href="/admin/experiences"
+              className="flex items-center gap-4 p-4 rounded-xl transition-colors"
+              style={{
+                background: "rgba(0, 122, 255, 0.05)",
+                border: "1px solid rgba(0, 122, 255, 0.1)",
+              }}
             >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center"
+                style={{ background: "var(--accent)", color: "white" }}
               >
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-              </svg>
-            </div>
-            <div>
-              <p
-                className="font-medium"
-                style={{ color: "var(--text-primary)" }}
-              >
-                View Experiences
-              </p>
-              <p
-                className="text-sm"
-                style={{ color: "var(--text-secondary)" }}
-              >
-                See your work history
-              </p>
-            </div>
-          </Link>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
+              </div>
+              <div>
+                <p
+                  className="font-medium"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  View Experiences
+                </p>
+                <p
+                  className="text-sm"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  See your work history
+                </p>
+              </div>
+            </Link>
 
-          <Link
-            href="/admin/skills"
-            className="flex items-center gap-4 p-4 rounded-xl transition-colors"
-            style={{
-              background: "rgba(88, 86, 214, 0.05)",
-              border: "1px solid rgba(88, 86, 214, 0.1)",
-            }}
-          >
-            <div
-              className="w-10 h-10 rounded-full flex items-center justify-center"
-              style={{ background: "#5856d6", color: "white" }}
+            <Link
+              href="/admin/skills"
+              className="flex items-center gap-4 p-4 rounded-xl transition-colors"
+              style={{
+                background: "rgba(88, 86, 214, 0.05)",
+                border: "1px solid rgba(88, 86, 214, 0.1)",
+              }}
             >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center"
+                style={{ background: "#5856d6", color: "white" }}
               >
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-              </svg>
-            </div>
-            <div>
-              <p
-                className="font-medium"
-                style={{ color: "var(--text-primary)" }}
-              >
-                View Skills
-              </p>
-              <p
-                className="text-sm"
-                style={{ color: "var(--text-secondary)" }}
-              >
-                See skill levels
-              </p>
-            </div>
-          </Link>
-        </div>
-      </AdminCard>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+              </div>
+              <div>
+                <p
+                  className="font-medium"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  View Skills
+                </p>
+                <p
+                  className="text-sm"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  See skill levels
+                </p>
+              </div>
+            </Link>
+          </div>
+        </AdminCard>
+
+        <ThemeSwitcher />
+      </div>
 
       {/* Recent Content */}
       <div className="grid gap-6 lg:grid-cols-2">
