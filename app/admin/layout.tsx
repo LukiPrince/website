@@ -1,5 +1,3 @@
-import { isAdminAuthenticated } from "@/lib/auth";
-import { LoginForm } from "@/components/admin/LoginForm";
 import { AdminNav } from "@/components/admin/AdminNav";
 
 export const runtime = "edge";
@@ -14,12 +12,6 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const isAuthenticated = await isAdminAuthenticated();
-
-  if (!isAuthenticated) {
-    return <LoginForm />;
-  }
-
   return (
     <div className="min-h-screen px-6 py-8">
       <div className="mx-auto max-w-6xl">

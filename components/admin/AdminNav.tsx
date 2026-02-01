@@ -1,21 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 export function AdminNav() {
   const pathname = usePathname();
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth", { method: "DELETE" });
-      router.push("/admin");
-      router.refresh();
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
 
   const navItems = [
     { href: "/admin", label: "Dashboard", exact: true },
@@ -72,16 +61,14 @@ export function AdminNav() {
         </div>
       </div>
 
-      <button
-        onClick={handleLogout}
-        className="text-sm font-medium px-4 py-2 rounded-full transition-colors"
+      <p
+        className="text-sm font-medium px-4 py-2"
         style={{
-          color: "var(--text-secondary)",
-          background: "rgba(0, 0, 0, 0.04)",
+          color: "var(--text-muted)",
         }}
       >
-        Logout
-      </button>
+        Admin Panel
+      </p>
     </nav>
   );
 }
